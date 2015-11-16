@@ -13,4 +13,8 @@ public class Vector3Float {
     public void test() {
         
     }
+    
+    public void test2() {
+        
+    }
 }
