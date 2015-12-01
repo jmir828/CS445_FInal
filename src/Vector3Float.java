@@ -6,15 +6,4 @@ public class Vector3Float {
         this.y=y;
         this.z=z;
     }
-    
-    //
-    //
-    //
-    public void test() {
-        
-    }
-    
-    public void test2() {
-        
-    }
 }

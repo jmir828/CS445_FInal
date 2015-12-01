@@ -1,13 +1,29 @@
 /*******************************************************************************
- * file: Program2.java author: Josue Miramontes 
+ * file: FPCameraController.java
+ * author: Josue Miramontes, Anthony Guzman, Gerret K
+ *                              
  * class: CS 445
  * 
- * assignment: Checkpoint 1 
- * date last modified: 11/5/2015
+ * assignment: Checkpoint 2 
+ * date last modified: 11/19/2015
  * 
- * purpose: 
+ * purpose: The purpose of this program is to give functionality to the camera's
+ *          position. The user is able to control the position of the camera,
+ *          as well as be able to rotate the camera using the mouse 
+ *          as input. The controls are as follows:
+ * 
+ *              w - move the camera position forward
+ *              a - move the camera position left
+ *              s - move the camera position back
+ *              d - move the camera position right
+ *              e - move the camera position down
+ *              SPACE - move the camera position up
+ * 
+ *              mouse - moving the mouse will rotate the camera accordingly.
  *
  ******************************************************************************/
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -18,8 +34,8 @@ import org.lwjgl.Sys;
 public class FPCameraController {
     private Vector3f position = null; //3d vector to store the camera's position in
     private Vector3f lPosition = null;
-    private float yaw = 0.0f;         //the rotation around the Y axis of the camera
-    private float pitch = 0.0f;       //the rotation around the X axis of the camera
+    private float yaw = 0;         //the rotation around the Y axis of the camera
+    private float pitch = 0;       //the rotation around the X axis of the camera
     private float angle = 0;
     private Chunk chunk = new Chunk(0,0,0);
 
@@ -27,8 +43,8 @@ public class FPCameraController {
     // purpose: initialize an instance of FPCameraController given the provided.
     public FPCameraController(float x, float y, float z) {
         //instantiate position Vector3f to the x y z params.
-        position = new Vector3f(x, y, z);
-        lPosition = new Vector3f(x,y,z);
+        position = new Vector3f(-30, -40, 0);
+        lPosition = new Vector3f(0,0,0);
         lPosition.x = 0f;
         lPosition.y = 15f;
         lPosition.z = 0f;
@@ -55,6 +71,10 @@ public class FPCameraController {
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
+        
+//        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+//        lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+//        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     // method: walkBackwards
@@ -64,6 +84,10 @@ public class FPCameraController {
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
+       
+//        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+//        lightPosition.put(lPosition.x+=xOffset).put(lPosition.y).put(lPosition.z-=zOffset).put(1.0f).flip();
+//        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     // method: strafeLeft
@@ -73,6 +97,10 @@ public class FPCameraController {
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw-90));
         position.x -= xOffset;
         position.z += zOffset;
+       
+//        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+//        lightPosition.put(lPosition.x+=xOffset).put(lPosition.y).put(lPosition.z-=zOffset).put(1.0f).flip();
+//        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     // method: strafeRight
@@ -82,6 +110,10 @@ public class FPCameraController {
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw+90));
         position.x -= xOffset;
         position.z += zOffset;
+        
+//        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+//        lightPosition.put(lPosition.x+=xOffset).put(lPosition.y).put(lPosition.z-=zOffset).put(1.0f).flip();
+//        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     // method: moveUp
@@ -100,7 +132,12 @@ public class FPCameraController {
         glRotatef(yaw, 0.0f, 1.0f, 0.0f);   //roatate the yaw around the Y axis
         //translate to the position vector's location
         glTranslatef(position.x, position.y, position.z);
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x+35).put(lPosition.y).put(lPosition.z+ 35).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
+    
     // method gameLoop: 
     // purpose: This method is the input controller. Based on input taken
     // from the keyboard, this method will adjust the camera within the program
@@ -112,6 +149,7 @@ public class FPCameraController {
         float dt = 0.0f;                //length of frame
         float lastTime = 0.0f;          // when the last frame was
         long time = 0;
+        camera.yaw = -180; //Postitons Camera
         float mouseSensitivity = 0.09f;
         float movementSpeed = .35f;
         Mouse.setGrabbed(true);         //hide the mouse
@@ -129,7 +167,7 @@ public class FPCameraController {
             camera.yaw(dx * mouseSensitivity);
             //controll camera pitch from y movement fromt the mouse
             camera.pitch(dy * mouseSensitivity);
-
+           
             //when passing in the distance to move
             //we times the movementSpeed with dt this is a time scale
             //so if its a slow frame u move more then a fast frame
